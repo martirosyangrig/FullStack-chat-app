@@ -1,0 +1,61 @@
+.wraper {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(232, 230, 230);
+
+  .continer {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    overflow-y: auto;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 25px;
+
+    .myInfo {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .myUserName {
+        font-size: 30px;
+        color: red;
+      }
+    }
+
+    .chatrooms {
+      width: 80%;
+      height: 80px;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 20px;
+      border-color: rgb(156, 149, 149);
+
+      .roomName {
+        font-size: 25px;
+        margin-left: 20px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: whitesmoke;
+        }
+      }
+
+      .deleteRoom {
+        font-size: 22px;
+        cursor: pointer;
+      }
+    }
+  }
+}

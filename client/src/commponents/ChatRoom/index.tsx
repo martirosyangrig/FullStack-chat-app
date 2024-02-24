@@ -22,7 +22,10 @@ export default function ChatRoom() {
 
   useSocket("joinedRoom", (data: any) => {
     setRoomHistoryMessages(data.messages);
-    setOnlineUsers(data.onlineUsers);
+    const onlineUsersInRoom = data.onlineUsers.filter(
+      (el: any) => el.roomId === id
+    );
+    setOnlineUsers(onlineUsersInRoom);
   });
 
   useSocket("leftedRoom", (data: any) => {
@@ -43,7 +46,7 @@ export default function ChatRoom() {
     emit("joinRoom", { roomId: id, user });
 
     return () => {
-      emit("leftRoom", {});
+      emit("leftRoom", { roomId: id });
     };
   }, [id]);
 
@@ -73,7 +76,21 @@ export default function ChatRoom() {
     <Box className={styles.wraper}>
       <Box className={styles.onlineUsers}>
         {onlineUsers.map((el: any) => {
-          return <div className={styles.users}>{el.user?.name}</div>;
+          return (
+            <div className={styles.users}>
+              <Avatar
+                alt="User Avatar"
+                src={el.user.img || "default_image_url"}
+                sx={{
+                  width: 30,
+                  height: 30,
+                }}
+              />
+              <span>
+                {el.user?.name} {el.user.id === userInfo.id && "(me)"}
+              </span>
+            </div>
+          );
         })}
       </Box>
       <Box className={styles.messageWraper}>

@@ -56,7 +56,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       const messages = this.pastMessages.get(roomId);
-
+      
       this.server.to(roomId).emit('joinedRoom', {
         userId,
         roomId,
@@ -74,6 +74,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const userData = this.onlineUsers.get(userId);
     if (userData) {
       const { roomId } = userData;
+      client.leave(roomId)
+
       this.onlineUsers.delete(userId);
       this.server.to(roomId).emit('leftedRoom', {
         roomId,

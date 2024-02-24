@@ -5,6 +5,7 @@ import axios from "axios";
 import { baseUrl } from "../../helpers/baseUrl";
 
 import styles from "./chatRooms.module.scss";
+import NewRoomModal from "./Modal";
 
 interface MyInfo {
   id: string;
@@ -50,6 +51,17 @@ export default function ChatRooms() {
     navigate(`/chatroom/${index}`);
   };
 
+  const createRoom = async (roomName: string) => {
+    try {
+      const { data } = await axios.post(`${baseUrl}chat-rooms`, {
+        name: roomName,
+      });
+      setChatRooms((prevChatRooms) => [...prevChatRooms, data]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Box className={styles.wraper}>
       <Box className={styles.continer}>
@@ -65,6 +77,7 @@ export default function ChatRooms() {
             }}
           />
           <Box className={styles.myUserName}>{myInfo?.name}</Box>
+          <NewRoomModal createRoom={createRoom} />
         </Box>
         {chatRooms?.map((el, index) => {
           return (

@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route path="signin" element={<SignInPage />} />
           <Route path="chatRooms" element={<ChatRoomsPage />} />
+          <Route path="/" element={<Navigate to="/chatRooms" />} />
           <Route path="chatRoom/:id" element={<ChatRoomPage />} />
           <Route path="*" element={<Navigate to="/chatRooms" />} />
         </Route>

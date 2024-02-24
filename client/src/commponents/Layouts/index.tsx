@@ -3,6 +3,8 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Navbar from "../Navbar";
 import { IUser } from "../../interfaces";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 import styles from "./layout.module.scss";
 
@@ -29,6 +31,7 @@ export default function MainLayout() {
     <Box className={styles.wraper}>
       <Navbar />
       <Outlet />
+      <ToastContainer />
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 import { Avatar, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import emit, { useSocket } from "../../hooks/useSocket";
 import formatTimestamp from "../../helpers/formatTimeStamp";
 import {
@@ -46,11 +47,15 @@ export default function ChatRoom() {
   });
 
   const sendMessage = () => {
-    if (message.trim() !== "") {
-      emit(EmitEventsName.SendMessage, { roomId: id, message: message });
-    }
+    try {
+      if (message.trim() !== "") {
+        emit(EmitEventsName.SendMessage, { roomId: id, message: message });
+      }
 
-    setMessage("");
+      setMessage("");
+    } catch (error) {
+      toast.error("Smth went wrong. Try again");
+    }
   };
 
   useEffect(() => {

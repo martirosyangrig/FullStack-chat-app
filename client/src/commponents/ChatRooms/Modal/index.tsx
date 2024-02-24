@@ -1,5 +1,6 @@
-import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+import { Box, Button, Modal, TextField } from "@mui/material";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import styles from "./modal.module.scss";
 
@@ -24,7 +25,11 @@ export default function NewRoomModal({ createRoom }: INewRoomModalProps) {
   };
 
   const onCreate = () => {
-    if (!name) return;
+    if (!name) {
+      toast.error('New Room name is required');
+      return
+    };
+
     createRoom(name);
     setOpen(false);
   };

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../helpers/baseUrl";
+import { toast } from "react-toastify";
 
 import styles from "./signin.module.scss";
 
@@ -18,8 +19,10 @@ export default function SignIn() {
     if (file) {
       const maxSizeInBytes = 1024 * 1024;
       if (file.size > maxSizeInBytes) {
+        toast.error("Image size should be no more than 1mb:");
         return;
       }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -29,12 +32,16 @@ export default function SignIn() {
   };
 
   const handleSave = async () => {
-    if (!imagePreview || !username) return;
+    if (!imagePreview || !username) {
+      toast.error("Username and Image are required");
+      return;
+    }
 
     const { data } = await axios.post(`${baseUrl}users`, {
       name: username,
       img: imagePreview,
     });
+
     sessionStorage.setItem("user", JSON.stringify(data));
     navigate("/chatRooms");
   };

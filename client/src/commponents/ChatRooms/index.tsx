@@ -3,24 +3,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { baseUrl } from "../../helpers/baseUrl";
+import NewRoomModal from "./Modal";
+import { IChatRoom, IUser } from "../../interfaces";
 
 import styles from "./chatRooms.module.scss";
-import NewRoomModal from "./Modal";
-
-interface MyInfo {
-  id: string;
-  name?: string;
-  img?: string;
-}
-
-interface IChatRooms {
-  name: string;
-  id: string;
-}
 
 export default function ChatRooms() {
-  const [myInfo, setMyInfo] = useState<MyInfo>();
-  const [chatRooms, setChatRooms] = useState<IChatRooms[]>([]);
+  const [myInfo, setMyInfo] = useState<IUser>();
+  const [chatRooms, setChatRooms] = useState<IChatRoom[]>([]);
 
   const navigate = useNavigate();
 
@@ -30,9 +20,11 @@ export default function ChatRooms() {
   };
 
   const getChatRooms = async () => {
-    const { data }: { data: IChatRooms[] } = await axios.get(
+    const { data }: { data: IChatRoom[] } = await axios.get(
       `${baseUrl}chat-rooms`
     );
+
+    
     if (!data) return;
     setChatRooms(data);
   };
@@ -53,7 +45,7 @@ export default function ChatRooms() {
 
   const createRoom = async (roomName: string) => {
     try {
-      const { data } = await axios.post(`${baseUrl}chat-rooms`, {
+      const { data }:  { data: IChatRoom } = await axios.post(`${baseUrl}chat-rooms`, {
         name: roomName,
       });
       setChatRooms((prevChatRooms) => [...prevChatRooms, data]);

@@ -3,13 +3,14 @@ import { useState } from "react";
 
 import styles from "./modal.module.scss";
 
-interface INewRoomModal {
+interface INewRoomModalProps {
   createRoom: (roomName: string) => void;
 }
 
-export default function NewRoomModal({ createRoom }: INewRoomModal) {
+export default function NewRoomModal({ createRoom }: INewRoomModalProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
+
   const handleModalOpen = () => {
     setOpen(!open);
   };
@@ -19,7 +20,7 @@ export default function NewRoomModal({ createRoom }: INewRoomModal) {
     setOpen(false);
   };
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value.trim());
+    setName(e.target.value);
   };
 
   const onCreate = () => {

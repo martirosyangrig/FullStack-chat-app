@@ -3,55 +3,68 @@ import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import emit, { useSocket } from "../../hooks/useSocket";
 import formatTimestamp from "../../helpers/formatTimeStamp";
+import {
+  EmitEventsName,
+  EventNames,
+  IDataForJoinedRoom,
+  IDataForLeftedRoom,
+  IDataForMessage,
+  IMessages,
+  IOnlineUsers,
+  IUser,
+} from "../../interfaces";
 
 import styles from "./chatRoom.module.scss";
 
 export default function ChatRoom() {
   const [message, setMessage] = useState<string>("");
-  const [userInfo, setUserInfo] = useState<any>(null);
-  const [onlineUsers, setOnlineUsers] = useState<any>([]);
-  const [roomHistoryMessages, setRoomHistoryMessages] = useState<any>([]);
+  const [userInfo, setUserInfo] = useState<IUser>();
+  const [onlineUsers, setOnlineUsers] = useState<IOnlineUsers[]>([]);
+  const [roomHistoryMessages, setRoomHistoryMessages] = useState<IMessages[]>(
+    []
+  );
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const { id } = useParams();
 
-  useSocket("message", (data: any) => {
+  useSocket(EventNames.Message, (data: IDataForMessage) => {
     setRoomHistoryMessages(data.messages);
   });
 
-  useSocket("joinedRoom", (data: any) => {
+  useSocket(EventNames.JoinedRoom, (data: IDataForJoinedRoom) => {
     setRoomHistoryMessages(data.messages);
+
     const onlineUsersInRoom = data.onlineUsers.filter(
       (el: any) => el.roomId === id
     );
     setOnlineUsers(onlineUsersInRoom);
   });
 
-  useSocket("leftedRoom", (data: any) => {
+  useSocket(EventNames.LeftedRoom, (data: IDataForLeftedRoom) => {
     setOnlineUsers(data.onlineUsers);
   });
 
   const sendMessage = () => {
     if (message.trim() !== "") {
-      emit("sendMessage", { roomId: id, message: message });
+      emit(EmitEventsName.SendMessage, { roomId: id, message: message });
     }
 
     setMessage("");
   };
 
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user") as string);
+    const user: IUser = JSON.parse(sessionStorage.getItem("user") as string);
 
-    emit("joinRoom", { roomId: id, user });
+    emit(EmitEventsName.JoinRoom, { roomId: id, user });
 
     return () => {
-      emit("leftRoom", { roomId: id });
+      emit(EmitEventsName.LeftRoom, { roomId: id });
     };
   }, [id]);
 
   const getUserInfo = () => {
-    const user = JSON.parse(sessionStorage.getItem("user") as string);
+    const user: IUser = JSON.parse(sessionStorage.getItem("user") as string);
     setUserInfo(user);
   };
 
@@ -87,7 +100,7 @@ export default function ChatRoom() {
                 }}
               />
               <span>
-                {el.user?.name} {el.user.id === userInfo.id && "(me)"}
+                {el.user?.name} {el.user.id === userInfo?.id && "(me)"}
               </span>
             </div>
           );
@@ -99,7 +112,7 @@ export default function ChatRoom() {
             return (
               <div
                 className={
-                  el.id === userInfo.id ? styles.messageMine : styles.message
+                  el.id === userInfo?.id ? styles.messageMine : styles.message
                 }
               >
                 <Box className={styles.senderInfo}>

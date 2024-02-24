@@ -8,7 +8,7 @@ import styles from "./signin.module.scss";
 
 export default function SignIn() {
   const [imagePreview, setImagePreview] = useState<string>("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ export default function SignIn() {
     const file = e.target.files?.[0];
 
     if (file) {
-      const maxSizeInBytes = 1024 * 1024; // 1MB
+      const maxSizeInBytes = 1024 * 1024;
       if (file.size > maxSizeInBytes) {
         return;
       }

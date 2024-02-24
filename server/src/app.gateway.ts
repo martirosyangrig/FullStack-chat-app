@@ -22,10 +22,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}, ----------------- `);
+
     const userId = client.id;
     const userData = this.onlineUsers.get(userId);
+
     if (userData) {
       const { roomId } = userData;
+      client.leave(roomId);
+
       this.onlineUsers.delete(userId);
       this.server.to(roomId).emit('leftedRoom', {
         roomId,
@@ -56,7 +61,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       }
 
       const messages = this.pastMessages.get(roomId);
-      
+
       this.server.to(roomId).emit('joinedRoom', {
         userId,
         roomId,
@@ -70,18 +75,22 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('leftRoom')
   handleLeftRoom(client: Socket, {}) {
-    const userId = client.id;
-    const userData = this.onlineUsers.get(userId);
-    if (userData) {
-      const { roomId } = userData;
-      client.leave(roomId)
+    try {
+      const userId = client.id;
+      const userData = this.onlineUsers.get(userId);
+      if (userData) {
+        const { roomId } = userData;
+        client.leave(roomId);
 
-      this.onlineUsers.delete(userId);
-      this.server.to(roomId).emit('leftedRoom', {
-        roomId,
-        userId,
-        onlineUsers: Array.from(this.onlineUsers.values()),
-      });
+        this.onlineUsers.delete(userId);
+        this.server.to(roomId).emit('leftedRoom', {
+          roomId,
+          userId,
+          onlineUsers: Array.from(this.onlineUsers.values()),
+        });
+      }
+    } catch (error) {
+      console.error('Error lefting room:', error.message);
     }
   }
 
@@ -90,24 +99,29 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     client: Socket,
     { roomId, message }: { roomId: string; message: string },
   ) {
-    const userId = client.id;
+    try {
+      const userId = client.id;
 
-    const currentUser = this.onlineUsers.get(userId);
-    this.pastMessages.get(roomId).push({
-      id: currentUser.user.id,
-      sender: currentUser.user.name,
-      text: message,
-      image: currentUser.user.img,
-      timestamp: new Date().toISOString(),
-    });
-    const messages = this.pastMessages.get(roomId);
-    this.server.to(roomId).emit('message', {
-      id: currentUser.user.id,
-      sender: currentUser.user.name,
-      message,
-      username: currentUser.user.name,
-      image: currentUser.user.img,
-      messages,
-    });
+      const currentUser = this.onlineUsers.get(userId);
+      this.pastMessages.get(roomId).push({
+        id: currentUser.user.id,
+        sender: currentUser.user.name,
+        text: message,
+        image: currentUser.user.img,
+        timestamp: new Date().toISOString(),
+      });
+      
+      const messages = this.pastMessages.get(roomId);
+      this.server.to(roomId).emit('message', {
+        id: currentUser.user.id,
+        sender: currentUser.user.name,
+        message,
+        username: currentUser.user.name,
+        image: currentUser.user.img,
+        messages,
+      });
+    } catch (error) {
+      console.error('Error sending message:', error.message);
+    }
   }
 }

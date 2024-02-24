@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./commponents/Layouts";
 import SignInPage from "./pages/SignIn";
 import ChatRoomsPage from "./pages/ChatRooms";
+import ChatRoomPage from "./pages/ChatRoom";
 
 import "./App.css";
-import ChatRoomPage from "./pages/ChatRoom";
 
 function App() {
   return (

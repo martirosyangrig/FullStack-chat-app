@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import io from "socket.io-client";
+import { baseUrl } from "../helpers/baseUrl";
 
-const socket = io("http://localhost:4000/");
+const socket = io(baseUrl);
 
 export { socket };
 export const useSocket = (eventName: string, callback: (data: any) => void) => {
